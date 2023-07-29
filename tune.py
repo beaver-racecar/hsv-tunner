@@ -40,7 +40,6 @@ import ipywidgets as widgets
 from nptyping import NDArray
 from typing import Any, Tuple, List, Optional
 from enum import Enum
-from utils import *
 
 
 rc = racecar_core.create_racecar()
@@ -116,10 +115,28 @@ def update():
             current_hsv_state+=1
 
 number_to_hsv = {0:"Hue",1:"Saturation",2:"Value"}
+def draw_contour(
+    image: NDArray,
+    contour: NDArray,
+    color: Tuple[int, int, int] = (0, 255, 0)
+) -> None:
+    """
+    Draws a contour on the provided image.
 
+    Args:
+        image: The image on which to draw the contour.
+        contour: The contour to draw on the image.
+        color: The color to draw the contour in BGR format.
+    """
+    if contour is not None:
+        cv.drawContours(image, [contour], 0, color, 3)
+    return image
 def slow():
-    image_a = draw_contour(image, largest_contour)
-    rc.display.show_color_image(image_a)
+    if image is not None and largest_contour is not None:
+        image_a = draw_contour(image, largest_contour)
+        rc.display.show_color_image(image_a)
+    else:
+        print("Image not found/Contour not found")
     print("-"*10)
     print("Current HSV values: ", str(current_low_hsv), str(current_high_hsv))
     print("Current HSV mode: ",number_to_hsv[current_hsv_state])
